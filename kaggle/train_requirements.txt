@@ -1,0 +1,9 @@
+# Training-specific dependencies (beyond what Kaggle preinstalls).
+# Install: pip install -r train_requirements.txt
+# On Kaggle, torch/torchvision/PIL/numpy are preinstalled — this adds the rest.
+
+timm>=1.0.0
+datasets>=2.14.0
+scikit-learn>=1.3.0
+matplotlib>=3.7.0
+tensorboard>=2.14.0

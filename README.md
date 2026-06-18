@@ -28,7 +28,8 @@ Dinov2-BigEarthS2/
 │   ├── requirements.txt
 │   └── Dockerfile
 ├── kaggle/
-│   └── train_dinov2_bigearths2.ipynb
+│   ├── train.py                # single-file training script — just run it
+│   └── train_requirements.txt
 ├── src/                         # React frontend (repo root)
 │   ├── App.tsx
 │   ├── components/              # ImageUploader, PredictionResults, ConfidenceBar
@@ -38,19 +39,21 @@ Dinov2-BigEarthS2/
 └── README.md
 ```
 
-> The 43-class nomenclature is the **single source of truth** and is duplicated in three places that must stay in sync: `backend/app/config.py` (`CLASSES_43`), `kaggle/train_dinov2_bigearths2.ipynb` (`CLASSES_43`), and `src/types/index.ts` (`CLASS_NAMES`).
+> The 43-class nomenclature is the **single source of truth** and is duplicated in three places that must stay in sync: `backend/app/config.py` (`CLASSES_43`), `kaggle/train.py` (`CLASSES_43`), and `src/types/index.ts` (`CLASS_NAMES`).
 
 ---
 
-## Part 1 — Training (Kaggle)
+## Part 1 — Training
 
-Open `kaggle/train_dinov2_bigearths2.ipynb` in a Kaggle notebook with:
+A single Python script — just run it.
 
-- **Accelerator:** GPU P100 (preferred) or T4 ×2
-- **Internet:** ON
-- **Persistence:** Files
+```bash
+cd kaggle
+pip install -r train_requirements.txt
+python train.py
+```
 
-Run all cells top to bottom. The pipeline:
+Works on Kaggle (GPU P100 or T4 ×2, Internet ON) or any machine with CUDA. The script:
 
 - Streams BigEarthNet-S2 via HuggingFace `datasets` (no 66 GB download).
 - Extracts RGB bands (B04, B03, B02) only — preserves DINOv2's ImageNet pretraining.
@@ -60,7 +63,7 @@ Run all cells top to bottom. The pipeline:
 - Saves `model_epoch_{n}.pth` every epoch + `model_best.pth` on val F1-micro improvement.
 - Training curves (2×2 grid) every 5 epochs, TensorBoard logs, and `training_history.json`.
 
-Outputs land in `/kaggle/working/{checkpoints,training_curves,logs}/`. **Download `model_best.pth`** from the notebook's Output tab and place it in `backend/checkpoints/`.
+Outputs land in `./checkpoints/`, `./training_curves/`, and `./logs/` (on Kaggle these are under `/kaggle/working/`). **Copy `model_best.pth`** into `backend/checkpoints/`.
 
 ---
 
